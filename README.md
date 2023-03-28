@@ -9,9 +9,7 @@ function functionName(parameters) end
 sometimes it will leave some "false" and "," inside of the parameters cuz i dont understand too much how regex works.
 
 # ---HOW TO USE---
-it runs in node.js
-you will need the nodemon package to run an internal server
---
+it runs in node.js.
+you will need the nodemon package to run an internal server.
 after you install nodemon, all you need is to run "npm run start" command and it will start scraping.
 i want to provide more updates for this archive and maybe turn it into an app.
----
