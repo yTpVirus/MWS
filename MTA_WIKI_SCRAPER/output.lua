@@ -1,1 +1,1 @@
-getSoundFFTData ( element sound, int iSamples [, int iBands = 0 ] );
+function getSoundFFTData ( sound, iSamples , iBands ) end

@@ -7,120 +7,43 @@ const { response } = require("express");
 const express = require("express");
 const app = express();
 //
-const Client_Scripting_Events = "https://wiki.multitheftauto.com/wiki/Client_Scripting_Events";
-const Server_Scripting_Events = "https://wiki.multitheftauto.com/wiki/Server_Scripting_Events";
-//
 const Client_Scripting_Functions = "https://wiki.multitheftauto.com/wiki/Client_Scripting_Functions";
 const Server_Scripting_Functions = "https://wiki.multitheftauto.com/wiki/Server_Scripting_Functions";
 //
-const clientEvents = [];
-const serverEvents = [];
+const elementsToRemove = ['string', 'int', '=',',','[', ']','bool','table','element','xmlNode','player','ped','false',
+'true','vehicle','float','account','acl','ban','nil','marker','colshape','blip','radararea','projectile','team','txd',
+'dff','col','"argb"','"wrap"','"2d"','weapon','effect','browser','light','searchlight','water','resource','textitem',
+'void','timer','function','var','...','xmlnode','""'];
 const clientFunctions = [];
 const serverFunctions = [];
 //Utils
-function deleteBeforeWord(text, word) {
-    const index = text.indexOf(word);
-    if (index !== -1) {
-      return text.substring(index);
-    }
-    return text;
-}  
-//ClientEvents
-let cei = 0;
-let isClientEventsDone = false;
-function parseClientEvents(table){
-    console.log("Iteraring: " + cei);
-    if (cei < table.length){
-        axios(table[cei].L).then(response => {
-            console.log("Trying to Acces: " + table[cei].L + " ....");
-            const html = response.data;
-            const $ = cheerio.load(html);
-            //Constructor
-            $(".mw-parser-output",html).each(function(i,parserOutput){
-                const p = $(parserOutput).find(".prettyprint");
-                let variables = "";
-                if (p.length > 1){
-                    p.each(function(i){
-                        if (i == 0){variables = $(this).text()}
-                    })
-                }
-                clientEvents.push({eventName : table[cei].T, vars : variables});
-                console.log("Object Created: " + table[cei].T + " ");
-                return;
-            })
-            cei++;
-            parseClientEvents(table);
-        })
-    }else{
-        isClientEventsDone = true;
+function getTextInsideParentheses(text) {
+    const regex = /\(([^)]+)\)/;
+    const matches = text.match(regex);
+    if (matches) {
+      return matches[1];
+    } else {
+      return "";
     }
 }
-//ServerEvents
-let sei = 0;
-let isServerEventsDone = false;
-function parseServerEvents(table){
-    console.log("Iteraring: " + sei);
-    if(sei < table.length){
-        axios(table[sei].L).then(response => {
-            console.log("Trying to Acces: " + table[sei].L + " ....");
-            const html = response.data;
-            const $ = cheerio.load(html);
-            //Constructor
-            $(".mw-parser-output",html).each(function(i,parserOutput){
-                const p = $(parserOutput).find(".prettyprint");
-                let variables = "";
-                if (p.length > 1){
-                    p.each(function(i){
-                        if (i == 0){variables = $(this).text()}
-                    })
-                }
-                serverEvents.push({eventName : table[sei].T, vars : variables});
-                console.log("Object Created: " + table[sei].T + " ");
-                return;
-            })
-            sei++;
-            parseServerEvents(table);
-        })
-    }else{
-        isServerEventsDone = true;
-    }
-}
-///
-function iterateClientEvents(){
-    axios(Client_Scripting_Events).then(response => {
-        const html = response.data;
-        const $ = cheerio.load(html);
-        const aList = [];
-        $("li",html).each(function(){
-            const title = $(this).text();
-            const link = $(this).find("a").attr("href");
-            if (title.startsWith("onClient")) {
-                aList.push({T : title,L : "https://wiki.multitheftauto.com" + link})
-            }
-        })
-        //Execute Parse Function
-        parseClientEvents(aList);
-        //
-    })
-}
-///
-function iterateServerEvents(){
-    axios(Server_Scripting_Events).then(response => {
-        const html = response.data;
-        const $ = cheerio.load(html);
-        const aList = [];
-        $("li",html).each(function(){
-            const title = $(this).text();
-            const link = $(this).find("a").attr("href");
-            if (title.startsWith("on")) {
-                aList.push({T : title , L : "https://wiki.multitheftauto.com" + link})
-            }
-        })
-        //Execute Parse Function
-        parseServerEvents(aList);
-        //
-    })
-}
+//
+function removeElementsFromText(text,fName) {
+    // Divide a string em um array
+    text = text.replace(/,/g, '');
+    text = text.replace(/\d+,/g, '');
+    const words = getTextInsideParentheses(text).split(' ');
+    // Filtra o array removendo os elementos desejados
+    const filteredWords = words.filter(word => !elementsToRemove.includes(word));
+    // Junta o array novamente em uma string
+    let newText =  "(" + filteredWords.join(', ') + ")";
+    newText = newText.replace(/\(,/g,'(');
+    newText = newText.replace(/\d+/g, '');
+    newText = newText.replace(/, \)/g,')');
+    newText = newText.replace(/]\)/g,')');
+    newText = newText.replace(/\//g,'');
+    // Retorna o novo texto sem os elementos removidos
+    return fName+newText;
+  }
 ////FunctionsParser
 //Client
 let cfi = 0;
@@ -138,11 +61,13 @@ function parseClientFunctions(table){
                 let variables = "";
                 if (p.length > 1){
                     p.each(function(i){
-                        if (i == 0){variables = deleteBeforeWord($(this).text(),table[cfi].T)}
+                        if (i == 0){
+                            variables = "function " + removeElementsFromText($(this).text(),table[csi].T) + " end"
+                        }
                     })
                 }
                 console.log(variables);
-                clientFunctions.push({eventName : table[cfi].T, vars : variables});
+                clientFunctions.push({variables});
                 //console.log("Object Created: " + table[cfi].T + " ");
                 return;
             })
@@ -169,11 +94,11 @@ function parseServerFunctions(table){
                 let variables = "";
                 if (p.length > 1){
                     p.each(function(i){
-                        if (i == 0){variables = deleteBeforeWord($(this).text(),table[csi].T)}
+                        if (i == 0){variables = "function " + removeElementsFromText($(this).text(),table[csi].T) + " end"}
                     })
                 }
                 console.log(variables);
-                serverFunctions.push({eventName : table[csi].T, vars : variables});
+                serverFunctions.push({variables});
                 //console.log("Object Created: " + table[cfi].T + " ");
                 return;
             })
@@ -225,13 +150,22 @@ function iterateServerFunctions(){
     })
 }
 function Init(){
-    //iterateServerFunctions();
-    //iterateClientFunctions();
-    //iterateClientEvents();
-    //iterateServerEvents();
-    let ise = setInterval(function(){if(isServerEventsDone){console.log("Server Events Done!");clearInterval(ise);}},500);
+    iterateServerFunctions();
+    let isf = setInterval(function(){if(isServerFunctionsDone)
+        {
+            console.log("Server Functions Done!");
+            iterateClientFunctions();
+            writeTableToFile(serverFunctions,"allServerFunctions.lua");
+            clearInterval(isf);
+        }},500);
+    let icf = setInterval(function(){if(isClientFunctionsDone)
+        {
+            console.log("Client Functions Done!");
+            writeTableToFile(clientFunctions,"allClientFunctions.lua");
+            clearInterval(icf);
+        }},500);
 }
-//Init();
+Init();
 //Port Manager
 app.listen(PORT,() => console.log("Server Running on Port " + PORT));
 
@@ -251,10 +185,5 @@ function writeTableToFile(table, filename) {
       console.log(`Arquivo ${filename} criado com sucesso!`);
     });
   }
-  
-  // exemplo de tabela
-  const table = [
-    {variables : "getSoundFFTData ( element sound, int iSamples [, int iBands = 0 ] )"}
-  ];
   // escreve a tabela em um arquivo chamado 'output.txt'
-  writeTableToFile(table, 'output.lua');
+  //writeTableToFile(table, 'output.lua');
