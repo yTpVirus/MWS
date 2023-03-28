@@ -98,7 +98,7 @@ function getTypeIndexFromClothes( clothesTexture, clothesModel) end
 function addColPolygonPoint( shape, fX, fY, index ) end	
 function createColCircle( fX, fY, radius) end	
 function createColCuboid( fX, fY, fZ, fWidth, fDepth, fHeight) end	
-function createColPolygon( fCenterX, fCenterY, fX, fY, fX, fY, fX, fY) end	
+function createColPolygon( fCenterX, fCenterY, fX, fY, fX1, fY1, fX2, fY2) end	
 function createColRectangle( fX, fY, fWidth, fHeight) end	
 function createColSphere( fX, fY, fZ, fRadius) end	
 function createColTube( fX, fY, fZ, fRadius, fHeight) end	
@@ -220,7 +220,7 @@ function fileOpen( filePath, readOnly) end
 function fileRead( file, theFile, count) end	
 function fileRename( filePath, newFilePath) end	
 function fileSetPos( file, theFile, offset) end	
-function fileWrite( file, theFile, string, string, string, ...) end	
+function fileWrite( file, theFile, string, string1, string2, ...) end	
 function httpClear( ) end	
 function httpRequestLogin( ) end	
 function httpSetResponseCode( code) end	
@@ -265,7 +265,7 @@ function getModuleInfo( moduleName) end
 function createObject( modelId, x, y, z, rx, ry, rz, isLowLOD) end	
 function getObjectScale( object, theObject) end	
 function moveObject( object, theObject, time, targetx, targety, targetz, moverx, movery, moverz, strEasingType, fEasingPeriod, fEasingAmplitude, fEasingOvershoot) end	
-function setObjectScale( object, theObject, scale, scaleY, scale, scaleZ, scale) end	
+function setObjectScale( object, theObject, scale, scaleY, scaleZ) end
 function stopObject( object, theobject) end	
 function clearChatBox() end	
 function outputChatBox( text ,visibleTo ,r ,g ,b ,colorCoded) end	
@@ -438,12 +438,12 @@ function setTransferBoxVisible( visible) end
 function shutdown( reason) end	
 function get( settingName) end	
 function set( settingName, value) end	
-function executeSQLQuery( query, param, param,...) end	
+function executeSQLQuery( query, param, param1,...) end	
 function dbConnect( databaseType, host, username, password, options) end	
-function dbExec( databaseConnection, query, param, param) end	
+function dbExec( databaseConnection, query, param, param1) end	
 function dbFree( handle, queryHandle) end	
 function dbPoll( handle, queryHandle, timeout, multipleResults) end	
-function dbPrepareString( databaseConnection, query, param, param,...) end	
+function dbPrepareString( databaseConnection, query, param, param1,...) end	
 function dbQuery( callbackFunction, callbackArguments, databaseConnection, query, param, ...) end	
 function countPlayersInTeam( theTeam) end	
 function createTeam( teamName, colorR,colorG, colorB ) end	
@@ -480,18 +480,18 @@ function textItemSetText( theTextitem, text) end
 function addDebugHook( hookType, callbackFunction, nameList) end	
 function base64Decode(data) end	
 function base64Encode( data) end	
-function bitAnd( uint, var, uint, var) end	
+function bitAnd( uint, var, uint1, var1) end	
 function bitNot( uint) end	
-function bitOr( uint, var, uint, var) end	
-function bitXor( uint, var, uint, var) end	
-function bitTest( uint, var, uint, var) end	
+function bitOr( uint, var, uint1, var1) end	
+function bitXor( uint, var, uint1, var1) end	
+function bitTest( uint, var, uint1, var1) end	
 function bitLRotate( value, n) end	
 function bitRRotate( value, n) end	
 function bitLShift( value, n) end	
 function bitRShift( value, n) end	
 function bitArShift( value, n) end	
 function bitExtract( uint, field, width ) end	
-function bitReplace(uint, uint, replaceValue, field, width ) end	
+function bitReplace(uint, uint1, replaceValue, field, width ) end	
 function debugSleep( sleep) end	
 function decodeString( algorithm, input, options, callback) end	
 	
@@ -500,8 +500,8 @@ function fromJSON( json) end
 function generateKeyPair( algorithm, options, callback) end	
 function getColorFromString( theColor) end	
 function getDevelopmentMode() end	
-function getDistanceBetweenPoints2D( x, y, x, y) end	
-function getDistanceBetweenPoints3D( x, y, z, x, y, z) end	
+function getDistanceBetweenPoints2D( x, y, x2, y2) end	
+function getDistanceBetweenPoints3D( x, y, z, x2, y2, z2) end	
 function getEasingValue( fProgress, strEasingType, fEasingPeriod, fEasingAmplitude, fEasingOvershoot) end	
 function getFPSLimit() end	
 function getNetworkStats( ) end	
@@ -518,8 +518,8 @@ function getUserdataType( userdata, value) end
 function getVersion( ) end	
 function hash( algorithm, dataToHash, options) end	
 function inspect( mixed, options) end	
-function interpolateBetween( x, y, z, x, y, z, fProgress, strEasingType, fEasingPeriod, fEasingAmplitude, fEasingOvershoot) end	
-function iprint( mixed, var, mixed, var, mixed, var,...) end	
+function interpolateBetween( x, y, z, x2, y2, z2, fProgress, strEasingType, fEasingPeriod, fEasingAmplitude, fEasingOvershoot) end	
+function iprint( mixed, var, mixed2, var2, mixed3, var3,...) end	
 function isOOPEnabled( ) end	
 function isTimer( theTimer) end	
 function killTimer( theTimer) end	
@@ -572,7 +572,7 @@ function addVehicleSirens( theVehicle, sirenCount, sirenType, flag, checkLosFlag
 function addVehicleUpgrade( theVehicle, stringint, upgrade) end	
 function attachTrailerToVehicle( theVehicle, theTrailer) end	
 function blowVehicle( vehicleToBlow, explode) end	
-function createVehicle( model, x, y, z, rx, ry, rz, numberplate, bDirection, variant, variant) end	
+function createVehicle( model, x, y, z, rx, ry, rz, numberplate, bDirection, variant, variant2) end	
 function detachTrailerFromVehicle( theVehicle, theTrailer) end	
 function fixVehicle( theVehicle) end	
 function getModelHandling( modelId) end	
@@ -660,11 +660,11 @@ function setVehicleSirensOn( theVehicle,sirensOn) end
 function setVehicleTaxiLightOn( taxi, LightState) end	
 function setVehicleTurnVelocity( theVehicle, rx, ry, rz) end	
 function setVehicleTurretPosition( turretVehicle, positionX, positionY) end	
-function setVehicleVariant( theVehicle, variant, variant) end	
+function setVehicleVariant( theVehicle, variant, variant2) end	
 function setVehicleWheelStates( theVehicle, frontLeft, rearLeft,frontRight, rearRight) end	
 function spawnVehicle( theVehicle, x, y, z, rx, ry, rz) end	
 function toggleVehicleRespawn( theVehicle, Respawn) end	
-function createWater( x, y, z, x, y, z, x, y, z, x, y, z, bShallow) end	
+function createWater( x, y, z, x2, y2, z2, x3, y3, z3, x4, y4, z4, bShallow) end	
 function getWaterColor( ) end	
 function getWaterVertexPosition( theWater, vertexIndex) end	
 function getWaveHeight() end	

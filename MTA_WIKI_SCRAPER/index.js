@@ -62,13 +62,13 @@ function parseClientFunctions(table){
                 if (p.length > 1){
                     p.each(function(i){
                         if (i == 0){
-                            variables = "function " + removeElementsFromText($(this).text(),table[csi].T) + " end"
+                            variables = "function " + removeElementsFromText($(this).text(),table[cfi].T) + " end"
                         }
                     })
                 }
                 console.log(variables);
                 clientFunctions.push({variables});
-                //console.log("Object Created: " + table[cfi].T + " ");
+                console.log("Object Created: " + table[cfi].T + " ");
                 return;
             })
             cfi++;
@@ -99,7 +99,7 @@ function parseServerFunctions(table){
                 }
                 console.log(variables);
                 serverFunctions.push({variables});
-                //console.log("Object Created: " + table[cfi].T + " ");
+                console.log("Object Created: " + table[cfi].T + " ");
                 return;
             })
             csi++;
@@ -150,7 +150,7 @@ function iterateServerFunctions(){
     })
 }
 function Init(){
-    iterateServerFunctions();
+    iterateClientFunctions();
     let isf = setInterval(function(){if(isServerFunctionsDone)
         {
             console.log("Server Functions Done!");
